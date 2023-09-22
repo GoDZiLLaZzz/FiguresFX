@@ -1,5 +1,4 @@
 package com.figures.figuresfx;
-
 import com.figures.interfaces.IShape;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,33 +11,64 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import com.figures.storage.Storage;
 
 public class FiguresApp extends Application {
 
 
     private WritableImage image;
     private GraphicsContext graphicsContext;
-    private int figuresCount = 0;
-    private int pointsCount = 0;
-    private List<IShape> listFigures = new ArrayList<>();
-    private List<Double> listPoints = new ArrayList<>();
+
 
     @Override
     public void start(Stage stage) throws IOException {
 
 
-        FXMLLoader fxmlLoader = new FXMLLoader(FiguresApp.class.getResource("hello-view.fxml"));
-        VBox root = fxmlLoader.load();
+        FXMLLoader fxmlLoadermain = new FXMLLoader(FiguresApp.class.getResource("main-view.fxml"));
+        FXMLLoader fxmlLoaderaddfigure = new FXMLLoader(FiguresApp.class.getResource("add_figure-view.fxml"));
+        FXMLLoader fxmlLoadermovefigure = new FXMLLoader(FiguresApp.class.getResource("move_figure-view.fxml"));
+        FXMLLoader fxmlLoaderdeletefigure = new FXMLLoader(FiguresApp.class.getResource("delete_figure-view.fxml"));
+        FXMLLoader fxmlLoadercrossfigure = new FXMLLoader(FiguresApp.class.getResource("cross_figure-view.fxml"));
+        FXMLLoader fxmlLoadersquarefigure = new FXMLLoader(FiguresApp.class.getResource("square_figure-view.fxml"));
+        FXMLLoader fxmlLoaderperimetrfigure = new FXMLLoader(FiguresApp.class.getResource("perimeter_figure-view.fxml"));
+        VBox root = fxmlLoadermain.load();
+        fxmlLoaderaddfigure.load();
+        fxmlLoadermovefigure.load();
+        fxmlLoaderdeletefigure.load();
+        fxmlLoadercrossfigure.load();
+        fxmlLoadersquarefigure.load();
+        fxmlLoaderperimetrfigure.load();
 
 
         // Получаем контроллер
-        FiguresController controller = fxmlLoader.getController();
+        MainController controller = fxmlLoadermain.getController();
+        AddFiguresController controller1 = fxmlLoaderaddfigure.getController();
+        MoveFiguresController controller2 = fxmlLoadermovefigure.getController();
+        DeleteFiguresController controller3 = fxmlLoaderdeletefigure.getController();
+        CrossFiguresController controller4 = fxmlLoadercrossfigure.getController();
+        SquareFigureController controller5 = fxmlLoadersquarefigure.getController();
+        PerimeterFigureController controller6 = fxmlLoaderperimetrfigure.getController();
+
+
+        // Устанавливаем зависимость
+        controller.setControllers(controller4,controller1,controller2,controller3);
+        controller1.setControllers(controller,controller4, controller2,controller3);
+        controller2.setControllers(controller,controller1, controller4,controller3);
+        controller3.setControllers(controller,controller1, controller4,controller2);
+        controller4.setControllers(controller,controller1, controller2,controller3);
+        controller5.setControllers(controller);
+        controller6.setControllers(controller);
 
         // Устанавливаем зависимость
         controller.setApplication(this);
+        controller1.setApplication(this);
+        controller2.setApplication(this);
+        controller3.setApplication(this);
+        controller4.setApplication(this);
+        controller5.setApplication(this);
+        controller6.setApplication(this);
 
 
         Scene scene = new Scene(root, 950, 700);
@@ -47,11 +77,9 @@ public class FiguresApp extends Application {
         stage.setScene(scene);
         stage.show();
 
-        // Assuming you have a Canvas component in your FXML named "canvas"
         Canvas canvas = (Canvas) root.lookup("#canvas");
         graphicsContext = canvas.getGraphicsContext2D();
-
-        // Initialize the image with the canvas size
+        
         image = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
         graphicsContext = canvas.getGraphicsContext2D();
         graphicsContext.drawImage(image, 0, 0);
@@ -71,44 +99,14 @@ public class FiguresApp extends Application {
         graphicsContext.strokeLine(canvasWidth / 2, 0, canvasWidth / 2, canvasHeight);
     }
 
-    public void setPointsCount(int value) {
-        pointsCount = value;
-    }
-
-
     public void setFiguresCount(int value) {
-        figuresCount = value;
+        Storage.figuresCount = value;
     }
 
-    public void incPointsCount(){
-        pointsCount++;
-    }
-
-    public void incFiguresCount(){
-        figuresCount++;
-    }
-
-    public void decFiguresCount(){
-       figuresCount--;
-    }
-
-    public int getPointsCount() {
-        return pointsCount;
-    }
-
-    public int getFiguresCount() {
-        return figuresCount;
-    }
-
-
-    public List<Double> getListPoints(){
-        return listPoints;
-    }
 
     public List<IShape> getListFigures(){
-        return listFigures;
+        return Storage.listFigures;
     }
-
 
     public static void main(String[] args) {
         launch();

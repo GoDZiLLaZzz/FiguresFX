@@ -9,6 +9,7 @@ module com.figures.figuresfx {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     opens com.figures.figuresfx to javafx.fxml;
     exports com.figures.figuresfx;
